@@ -3,13 +3,15 @@ using UniRx;
 using UnityEngine;
 
 [RequireComponent(typeof(DamageTarget))]
-public class RifleWeapon : MonoBehaviour, ILevelAbility
+public class RifleWeapon : MonoBehaviour, IUpgradeable
 {
     public IObservable<RifleWeaponEvent> SingleShootPerformed { get => _performSingleShootSubject; }
 
     public IReadOnlyReactiveProperty<int> Level { get => _currentLevel; }
 
     private const float ReloadingTimeInterval = 0.1f;
+
+    private const int DamagePerLelevelMultiplier = 5;
 
     [SerializeField]
     private LayerMask _enemiesLayerMask;
@@ -24,9 +26,7 @@ public class RifleWeapon : MonoBehaviour, ILevelAbility
     private float _reloadingTime = 0.5f;
 
     [SerializeField]
-    private int _baseDamagePerBullet = 50;
-
-    private int _damagePerBullet = 50;
+    private int _damagePerBullet = 10;
 
     private Subject<RifleWeaponEvent> _performSingleShootSubject = new Subject<RifleWeaponEvent>();
 
@@ -38,26 +38,20 @@ public class RifleWeapon : MonoBehaviour, ILevelAbility
 
     private ReactiveProperty<int> _currentLevel = new ReactiveProperty<int>(1);
 
-    private void Start()
+    private void Awake()
     {
-        UpdateStatsFromLevel();
-
         _owner = GetComponent<IDamageTarget>();
     }
 
-    public void OnLevelUp(int level)
+    public void ApplyUpgrade(UpgradeItem upgrade)
     {
-        _currentLevel.Value = level;
+        _currentLevel.Value = upgrade.Level;
+        UpdateStats(upgrade.Level);
     }
 
-    private void UpdateStatsFromLevel()
+    private void UpdateStats(int level)
     {
-        _currentLevel.Subscribe(level => UpdateDamage(level));
-    }
-
-    private void UpdateDamage(int level)
-    {
-        _damagePerBullet = _baseDamagePerBullet * level;
+        _damagePerBullet += DamagePerLelevelMultiplier * level;
     }
 
     public void ShootAt(DamageTarget target)
