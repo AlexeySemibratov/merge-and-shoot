@@ -1,8 +1,4 @@
-using UniRx;
-
-public interface ILevelAbility
+public interface ILevelUpAbility
 {
-    IReadOnlyReactiveProperty<int> Level { get; }
-
-    void OnLevelUp(int level);
+    void LevelUp(int level);
 }

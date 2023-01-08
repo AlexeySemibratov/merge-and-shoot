@@ -8,6 +8,8 @@ public class Player : MonoBehaviour, IWorldMovementHandler
 {
     public static Player Instance { get; private set; }
 
+    public IUpgradeable UpgradableWeapon => _rifleWeapon;
+
     [SerializeField]
     private float _rotationSpeed = 300f;
 
