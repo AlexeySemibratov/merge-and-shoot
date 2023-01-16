@@ -125,6 +125,10 @@ PrefabInstance:
       propertyPath: _maxHP
       value: 125
       objectReference: {fileID: 0}
+    - target: {fileID: 7142801241316240951, guid: 5aa98825ab713ed4ebe19d2f792e82dd, type: 3}
+      propertyPath: _moneyDropAmount
+      value: 30
+      objectReference: {fileID: 0}
     - target: {fileID: 7337150171338480153, guid: 5aa98825ab713ed4ebe19d2f792e82dd, type: 3}
       propertyPath: m_RootOrder
       value: 3

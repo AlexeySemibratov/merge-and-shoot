@@ -1,5 +1,5 @@
 using System;
-using System.Data.SqlTypes;
+using TMPro;
 using UniRx;
 using UnityEngine;
 
@@ -10,6 +10,9 @@ public class ShopView : MonoBehaviour
 
     [SerializeField]
     private Shop _shop;
+
+    [SerializeField]
+    private TextMeshProUGUI _moneyText;
 
     private void Awake()
     {
@@ -44,12 +47,11 @@ public class ShopView : MonoBehaviour
 
     private void UpdateMoneyAmount(int amount)
     {
-        Debug.Log($"Money amount {amount}!");
+        _moneyText.text = amount.ToString();
     }
 
     private void UpdateWeaponUpgradeItemData(int currentMoney, UpgradeItem upgrade)
     {
-        Debug.Log("Update weapon view data!");
         var model = new ShopItemModel
         {
             Cost = upgrade.Cost,

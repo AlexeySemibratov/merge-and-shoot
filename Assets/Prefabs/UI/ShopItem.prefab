@@ -127,6 +127,7 @@ GameObject:
   - component: {fileID: 2223635270999474065}
   - component: {fileID: 7535831392666727976}
   - component: {fileID: 6328266106507821338}
+  - component: {fileID: 3585870926882858386}
   m_Layer: 5
   m_Name: ShopItem
   m_TagString: Untagged
@@ -179,6 +180,7 @@ MonoBehaviour:
   _costText: {fileID: 1342756731904984807}
   _levelText: {fileID: 2755189709177521938}
   _itemButton: {fileID: 6328266106507821338}
+  _rootCanvas: {fileID: 3585870926882858386}
 --- !u!114 &7535831392666727976
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -234,7 +236,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0.2830189, g: 0.14551443, b: 0.14551443, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -253,6 +255,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!225 &3585870926882858386
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3707066540492637430}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &6181062916270777154
 GameObject:
   m_ObjectHideFlags: 0

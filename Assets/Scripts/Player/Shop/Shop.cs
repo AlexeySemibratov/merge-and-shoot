@@ -24,7 +24,6 @@ public class Shop : MonoBehaviour
     {
         if (_currentMoney.Value >= _availableWeaponUpgrade.Cost)
         {
-            Debug.Log("Upgrade buyed!");
             RemoveMoney(_availableWeaponUpgrade.Cost);
             _player.UpgradableWeapon.ApplyUpgrade(_availableWeaponUpgrade);
             UpdateWeaponUpgrade();

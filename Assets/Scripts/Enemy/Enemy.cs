@@ -6,7 +6,12 @@ public class Enemy : MonoBehaviour
 {
     public DamageTarget DamageTarget => _damageTarget;
 
+    public int MoneyDropAmount => _moneyDropAmount;
+
     private const float DespawnTime = 2.0f;
+
+    [SerializeField]
+    private int _moneyDropAmount = 0;
 
     private DamageTarget _damageTarget;
     private Rigidbody _rigidBody;
