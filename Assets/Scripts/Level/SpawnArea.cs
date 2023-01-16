@@ -15,6 +15,8 @@ public class SpawnArea : MonoBehaviour
     [SerializeField]
     private float _spawnAreaWidth = 1.0f;
 
+    private RewardManager _rewardManager => GameContext.Instance.RewardManager;
+
     private IntReactiveProperty CurrentWave = new IntReactiveProperty(StartWaveIndex);
 
     private IntReactiveProperty _totalEnemiesLeft = new IntReactiveProperty(-1);
@@ -111,8 +113,16 @@ public class SpawnArea : MonoBehaviour
     {
         enemy.DamageTarget
             .TargetDead
-            .Subscribe(_ => ReduceEnemiesCount())
+            .Subscribe(_ => {
+                AddRewardForEnemy(enemy);
+                ReduceEnemiesCount();
+                })
             .AddTo(_wavesSpawnDisposables);
+    }
+
+    private void AddRewardForEnemy(Enemy enemy)
+    {
+        _rewardManager.AddRewardForEnemy(enemy.MoneyDropAmount);
     }
 
     private void ReduceEnemiesCount()

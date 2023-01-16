@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 public class ShopItemViewPresenter : MonoBehaviour
 {
+    private const float EnabledAlpha = 1.0f;
+    private const float DisabledAlpha = 0.3f;
+
     [SerializeField]
     private TextMeshProUGUI _costText;
 
@@ -14,11 +17,15 @@ public class ShopItemViewPresenter : MonoBehaviour
     [SerializeField]
     private Button _itemButton;
 
+    [SerializeField]
+    private CanvasGroup _rootCanvas;
+
     public void UpdateData(ShopItemModel model)
     {
         _costText.text = model.Cost.ToString();
         _levelText.text = model.Level.ToString();
-        _itemButton.enabled = model.Available;
+        _itemButton.interactable = model.Available;
+        _rootCanvas.alpha = model.Available ? EnabledAlpha : DisabledAlpha;
     }
 
     public void AddItemOnClickAction(UnityAction action)

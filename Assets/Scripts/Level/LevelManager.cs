@@ -7,7 +7,7 @@ public class LevelManager : MonoBehaviour, IWorldMovementHandler
 {
     public ReactiveProperty<int> CurrentLevel => _currentLevelNumber;
 
-    private const float LevelSwitchDelay = 1.5f;
+    private const float LevelSwitchDelay = 2.5f;
     private const float LevelStartDelay = 1f;
 
     [SerializeField]
@@ -23,8 +23,6 @@ public class LevelManager : MonoBehaviour, IWorldMovementHandler
     private float _distanceBetweenStages;
 
     private IntReactiveProperty _currentLevelNumber = new IntReactiveProperty(1);
-
-    private Player _player => Player.Instance;
 
     private void Awake()
     {
