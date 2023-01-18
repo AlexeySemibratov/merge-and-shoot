@@ -20,6 +20,9 @@ public class RifleWeapon : MonoBehaviour, IUpgradeable
     private Bullet _bulletPrefab;
 
     [SerializeField]
+    private ParticleSystem _flashParticlesPrefab;
+
+    [SerializeField]
     private Transform _gunMuzzleTransform;
 
     [SerializeField]
@@ -63,7 +66,7 @@ public class RifleWeapon : MonoBehaviour, IUpgradeable
 
         if (Physics.Raycast(_gunMuzzleTransform.transform.position, direction, out RaycastHit hit, Mathf.Infinity, _enemiesLayerMask))
         {
-            ShootAt(direction);
+            Shoot();
         }
     }
 
@@ -72,11 +75,12 @@ public class RifleWeapon : MonoBehaviour, IUpgradeable
         _currentState.Value = newState;
     }
 
-    private void ShootAt(Vector3 direction)
+    private void Shoot()
     {
         _performSingleShootSubject.OnNext(RifleWeaponEvent.SingleShoot);
         StartReloading();
-        SpawnBullet(direction);
+        SpawnFlashParticles();
+        SpawnBullet();
     }
 
     private void StartReloading()
@@ -98,9 +102,9 @@ public class RifleWeapon : MonoBehaviour, IUpgradeable
         }
     }
 
-    private void SpawnBullet(Vector3 direction)
+    private void SpawnBullet()
     {
-        Bullet bullet = Bullet.Instantiate(_bulletPrefab, _gunMuzzleTransform.position, Quaternion.LookRotation(direction));
+        Bullet bullet = Bullet.Instantiate(_bulletPrefab, _gunMuzzleTransform.position, _gunMuzzleTransform.rotation);
         var hitboxData = new HitboxData
         {
             Owner = _owner,
@@ -108,6 +112,12 @@ public class RifleWeapon : MonoBehaviour, IUpgradeable
         };
 
         bullet.SetHitboxData(hitboxData);
+    }
+
+    private void SpawnFlashParticles()
+    {
+        var particles = Instantiate(_flashParticlesPrefab, _gunMuzzleTransform);
+        Destroy(particles.gameObject, particles.main.duration);
     }
 
     private enum State

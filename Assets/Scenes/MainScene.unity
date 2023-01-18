@@ -637,10 +637,10 @@ RectTransform:
   m_Father: {fileID: 1865499105}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0.31535414, y: 0.3}
+  m_AnchorMax: {x: 0.66120833, y: 0.85020536}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 140, y: 140}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &586010589
 MonoBehaviour:
@@ -1669,6 +1669,10 @@ PrefabInstance:
       propertyPath: _baseDamagePerBullet
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 2834161178478961268, guid: 73bf4906289630148924977a9c82d154, type: 3}
+      propertyPath: _flashParticlesPrefab
+      value: 
+      objectReference: {fileID: 2616834945595334400, guid: 62b2c50e713bae746b33cdc635937500, type: 3}
     - target: {fileID: 2834161178478961272, guid: 73bf4906289630148924977a9c82d154, type: 3}
       propertyPath: _radius
       value: 12
