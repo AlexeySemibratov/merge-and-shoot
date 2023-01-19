@@ -7,6 +7,8 @@ public class Hitbox : MonoBehaviour
     [SerializeField]
     private bool _destroyGameObjectWhenHit = false;
 
+    private bool _hitTarget = false;
+
     public void SetHitboxData(HitboxData data)
     {
         HitboxData = data;  
@@ -14,9 +16,11 @@ public class Hitbox : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.TryGetComponent(out Hurtbox hurtbox))
+        if (_hitTarget == false && other.gameObject.TryGetComponent(out Hurtbox hurtbox))
         {
+            _hitTarget = true;
             OnHitTarget(hurtbox.Owner);
+            hurtbox.OnReceiveDamage(HitboxData.DamageAmount);
         }
     }
 
