@@ -6,4 +6,8 @@ public class Hurtbox : MonoBehaviour
 
     [SerializeField]
     private DamageTarget _owner;
+
+    public virtual void OnReceiveDamage(int damageAmount)
+    {
+    }
 }
