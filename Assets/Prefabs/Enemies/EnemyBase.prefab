@@ -553,7 +553,6 @@ GameObject:
   - component: {fileID: 2694720966902808303}
   - component: {fileID: 8591928746460449151}
   - component: {fileID: 2620025793674096264}
-  - component: {fileID: 1674367657537826881}
   m_Layer: 6
   m_Name: HpIndicatorView
   m_TagString: Untagged
@@ -649,18 +648,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _target: {fileID: 7142801241316240949}
   _hpSlider: {fileID: 8591928746460449151}
---- !u!114 &1674367657537826881
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7774799281353447227}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e2cb4d40623f504fb8a8c41b7c83faf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &8111136372297862569
 GameObject:
   m_ObjectHideFlags: 0
@@ -716,7 +703,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7933710607411799987}
   - component: {fileID: 7534412675254977543}
-  - component: {fileID: 7066715675721467995}
   m_Layer: 6
   m_Name: FloatingDamagePopupContainer
   m_TagString: Untagged
@@ -756,16 +742,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a33e1a79e2409ff42830abfed023acef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _floatingTextPrefab: {fileID: 4621599238394513516, guid: 75c101a9cae6d5c47a43fcb5a9a1c388, type: 3}
---- !u!114 &7066715675721467995
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8907110352223568175}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7e2cb4d40623f504fb8a8c41b7c83faf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  _floatingDamageItemPrefab: {fileID: 3759840647847415340, guid: 75c101a9cae6d5c47a43fcb5a9a1c388, type: 3}
