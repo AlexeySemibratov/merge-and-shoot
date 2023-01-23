@@ -5,13 +5,13 @@ using UnityEngine;
 [RequireComponent(typeof(DamageTarget))]
 public class RifleWeapon : MonoBehaviour, IUpgradeable
 {
-    public IObservable<RifleWeaponEvent> SingleShootPerformed { get => _performSingleShootSubject; }
+    public IObservable<RifleWeaponEvent> SingleShootPerformed => _performSingleShootSubject;
+    private Subject<RifleWeaponEvent> _performSingleShootSubject = new Subject<RifleWeaponEvent>();
 
-    public IReadOnlyReactiveProperty<int> Level { get => _currentLevel; }
+    public IReadOnlyReactiveProperty<int> Level => _currentLevel;
+    private ReactiveProperty<int> _currentLevel = new ReactiveProperty<int>(1);
 
     private const float ReloadingTimeInterval = 0.1f;
-
-    private const int DamagePerLelevelMultiplier = 5;
 
     [SerializeField]
     private LayerMask _enemiesLayerMask;
@@ -26,12 +26,9 @@ public class RifleWeapon : MonoBehaviour, IUpgradeable
     private Transform _gunMuzzleTransform;
 
     [SerializeField]
-    private float _reloadingTime = 0.5f;
+    private WeaponStats _weaponStats;
 
-    [SerializeField]
-    private int _damagePerBullet = 10;
-
-    private Subject<RifleWeaponEvent> _performSingleShootSubject = new Subject<RifleWeaponEvent>();
+    private IDamageSkillRegistry _damageSkills;
 
     private IDamageTarget _owner;
 
@@ -39,22 +36,20 @@ public class RifleWeapon : MonoBehaviour, IUpgradeable
 
     private CompositeDisposable _reloadingDisposable = new CompositeDisposable();
 
-    private ReactiveProperty<int> _currentLevel = new ReactiveProperty<int>(1);
-
     private void Awake()
     {
         _owner = GetComponent<IDamageTarget>();
+
+        var skillContainer = new SkillContainer(); // TODO Temporal. Rifle class is not a skill container
+        skillContainer.AddSkill(new CriticalDamageSkill(0.5f, 0.3f));
+
+        _damageSkills = skillContainer;
     }
 
     public void ApplyUpgrade(UpgradeItem upgrade)
     {
         _currentLevel.Value = upgrade.Level;
-        UpdateStats(upgrade.Level);
-    }
-
-    private void UpdateStats(int level)
-    {
-        _damagePerBullet += DamagePerLelevelMultiplier * level;
+        _weaponStats.UpdateStats(upgrade.Level);
     }
 
     public void ShootAt(DamageTarget target)
@@ -93,9 +88,9 @@ public class RifleWeapon : MonoBehaviour, IUpgradeable
     }
 
     private void HandleReloadingTime(long time)
-    {
+    { 
         float totalTime = time * ReloadingTimeInterval;
-        if (totalTime >= _reloadingTime)
+        if (totalTime >= _weaponStats.ReloadingTime)
         {
             _reloadingDisposable.Clear();
             _currentState.Value = State.ReadyToFire;
@@ -108,10 +103,29 @@ public class RifleWeapon : MonoBehaviour, IUpgradeable
         var hitboxData = new HitboxData
         {
             Owner = _owner,
-            DamageAmount = _damagePerBullet,
+            DamageData = CalculateDamageData(),
         };
 
         bullet.SetHitboxData(hitboxData);
+    }
+
+    private DamageData CalculateDamageData()
+    {
+        var basicDamage = new DamageData
+        {
+            BaseAmount = _weaponStats.DamagePerBullet,
+            CriticalMultiplyer = 1.0f,
+            IsCritical = false,
+            AdditionalAmount = 0,
+            DamageType = DamageType.Physical
+        };
+
+        foreach (IDamageSkill skill in _damageSkills.GetDamageSkills())
+        {
+            basicDamage = skill.ApplyForDamage(basicDamage);
+        }
+
+        return basicDamage;
     }
 
     private void SpawnFlashParticles()

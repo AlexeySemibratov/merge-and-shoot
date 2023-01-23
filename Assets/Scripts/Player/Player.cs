@@ -51,6 +51,9 @@ public class Player : MonoBehaviour, IWorldMovementHandler
 
     private void Update()
     {
+        if (_damageTarget.IsDead)
+            return;
+
         UpdateBehaviour();
     }
 

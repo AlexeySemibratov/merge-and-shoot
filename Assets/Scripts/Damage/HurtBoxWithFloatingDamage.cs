@@ -3,15 +3,15 @@ using UnityEngine;
 public class HurtBoxWithFloatingDamage : Hurtbox
 {
     [SerializeField]
-    private FloatingDamagePopup _floatingDamagePopup;
+    private FloatingDamagePopupPanel _floatingDamagePopup;
 
     [SerializeField]
     private Transform _floatingDamageShowPosition;
 
-    public override void OnReceiveDamage(int damageAmount)
+    public override void OnReceiveDamage(DamageData damageData)
     {
-        base.OnReceiveDamage(damageAmount);
+        base.OnReceiveDamage(damageData);
 
-        _floatingDamagePopup.ShowFloatingDamage(_floatingDamageShowPosition.position, damageAmount);
+        _floatingDamagePopup.ShowFloatingDamage(_floatingDamageShowPosition.position, damageData);
     }
 }

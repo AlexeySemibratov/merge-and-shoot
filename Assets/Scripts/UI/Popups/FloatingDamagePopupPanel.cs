@@ -1,30 +1,35 @@
 using DG.Tweening;
-using TMPro;
 using UnityEngine;
 
-public class FloatingDamagePopup : MonoBehaviour
+public class FloatingDamagePopupPanel : MonoBehaviour
 {
     private const float Duration = 1.5f;
 
     [SerializeField]
-    private TextMeshProUGUI _floatingTextPrefab;
+    private FloatingDamageItemView _floatingDamageItemPrefab;
 
-    public void ShowFloatingDamage(Vector3 position, int amount)
+    private FloatingDamageItemViewFactory _itemFactory;
+
+    private void Awake()
     {
-        TextMeshProUGUI floatingText = CreateFloatingText(position, amount);
+        _itemFactory = new FloatingDamageItemViewFactory(_floatingDamageItemPrefab);
+    }
+
+    public void ShowFloatingDamage(Vector3 position, DamageData damageData)
+    {
+        FloatingDamageItemView floatingText = CreateFloatingText(position, damageData);
         AnimatePopup(floatingText);
         Destroy(floatingText.gameObject, Duration);
     }
 
-    private TextMeshProUGUI CreateFloatingText(Vector3 posistion, int amount)
+    private FloatingDamageItemView CreateFloatingText(Vector3 posistion, DamageData damageData)
     {
-        TextMeshProUGUI floatingText = Instantiate(_floatingTextPrefab, posistion, Quaternion.identity);
+        FloatingDamageItemView floatingText = _itemFactory.Create(damageData, posistion);
         floatingText.transform.SetParent(transform, false);
-        floatingText.text = amount.ToString();
         return floatingText;
     }
 
-    private void AnimatePopup(TextMeshProUGUI floatingText)
+    private void AnimatePopup(FloatingDamageItemView floatingText)
     {
         RectTransform rectTransform = floatingText.GetComponent<RectTransform>();
 
