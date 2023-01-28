@@ -123,6 +123,52 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &1303115
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1303116}
+  - component: {fileID: 1303117}
+  m_Layer: 0
+  m_Name: WaveFactory
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1303116
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1303115}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2090835651}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1303117
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1303115}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e08a64db3c962ba44af78a3b36eb98f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _enemyBugGreenPrefab: {fileID: 6919819624003399782, guid: b4ee0b7949e08d84cb151db8295d79d9, type: 3}
+  _enemyBugRedPrefab: {fileID: 2807150005810969553, guid: d4db86e6a345c5349aaf8019882b7498, type: 3}
 --- !u!1 &29626545
 GameObject:
   m_ObjectHideFlags: 0
@@ -1330,7 +1376,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _world: {fileID: 1613983511}
   _spawnArea: {fileID: 182269996}
-  _waves: {fileID: 11400000, guid: ff9b47525759bfb46bc8f17c5a6b615b, type: 2}
+  _wavesFactoryProvider: {fileID: 1303117}
   _distanceBetweenStages: 15
 --- !u!4 &1310153357
 Transform:
@@ -1603,6 +1649,7 @@ Transform:
   - {fileID: 182269995}
   - {fileID: 1310153357}
   - {fileID: 1176878027}
+  - {fileID: 1303116}
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
