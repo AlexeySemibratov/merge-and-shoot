@@ -1,5 +1,4 @@
-﻿[System.Serializable]
-public class EnemyWave
+﻿public class EnemyWave
 {
     public float WaveStartDelay = 1.0f;
     public float EnemiesSpawnDelay = 1.0f;

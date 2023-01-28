@@ -17,12 +17,14 @@ public class LevelManager : MonoBehaviour, IWorldMovementHandler
     private SpawnArea _spawnArea;
 
     [SerializeField]
-    private EnemyWaves _waves;
+    private EnemyWavesFactoryProvider _wavesFactoryProvider;
 
     [SerializeField]
     private float _distanceBetweenStages;
 
     private IntReactiveProperty _currentLevelNumber = new IntReactiveProperty(1);
+
+    private IEnemyWavesFactory _wavesFactory => _wavesFactoryProvider.Get();
 
     private void Awake()
     {
@@ -46,7 +48,7 @@ public class LevelManager : MonoBehaviour, IWorldMovementHandler
             .AddTo(this);
 
         _currentLevelNumber
-            .Subscribe(stage => SetupStage(stage))
+            .Subscribe(stage => SetupLevel(stage))
             .AddTo(this);
     }
 
@@ -55,10 +57,10 @@ public class LevelManager : MonoBehaviour, IWorldMovementHandler
         _world.MoveBackFor(_distanceBetweenStages);
     }
 
-    private void SetupStage(int stageNumber)
+    private void SetupLevel(int levelNumber)
     {
-        Debug.Log($"Spawn waves. stage {stageNumber}");
-        _spawnArea.SpawnWaves(_waves);
+        Debug.Log($"Spawn waves. Level: {levelNumber}");
+        _spawnArea.SpawnWaves(_wavesFactory.CreateWaves(levelNumber));
     }
 
     private IEnumerator IncrementLevelNumber()
