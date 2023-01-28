@@ -7,23 +7,18 @@ using Random = UnityEngine.Random;
 public class SpawnArea : MonoBehaviour
 {
     public IObservable<Unit> AreaCleared => _areaClearedSubject;
+    private Subject<Unit> _areaClearedSubject = new Subject<Unit>();
 
     private const float SpawnYAngle = 180f;
-
-    private const int StartWaveIndex = -1;
 
     [SerializeField]
     private float _spawnAreaWidth = 1.0f;
 
     private RewardManager _rewardManager => GameContext.Instance.RewardManager;
 
-    private IntReactiveProperty CurrentWave = new IntReactiveProperty(StartWaveIndex);
-
     private IntReactiveProperty _totalEnemiesLeft = new IntReactiveProperty(-1);
 
-    private Subject<Unit> _areaClearedSubject = new Subject<Unit>();
-
-    private CompositeDisposable _wavesSpawnDisposables = new();
+    private CompositeDisposable _spawnedEnemiesEventsContainer = new();
 
     private void Awake()
     {
@@ -32,16 +27,10 @@ public class SpawnArea : MonoBehaviour
 
     public void SpawnWaves(EnemyWaves enemyWaves)
     {
-        if (enemyWaves.Waves.Count <= 0)
-        {
-            throw new ArgumentException("Wave must be non empty!");
-        }
-
-        _wavesSpawnDisposables.Clear();
+        _spawnedEnemiesEventsContainer.Clear();
         _totalEnemiesLeft.Value = enemyWaves.GetTotatlEnemiesCount();
 
-        SetupWaveSpawner(enemyWaves);
-        ScheduleFirstWave(enemyWaves);
+        StartCoroutine(SpawnWavesInternal(enemyWaves));
     }
 
     private void Setup()
@@ -52,52 +41,24 @@ public class SpawnArea : MonoBehaviour
             .AddTo(this);
     }
 
-    private void SetupWaveSpawner(EnemyWaves enemyWaves)
+    private IEnumerator SpawnWavesInternal(EnemyWaves enemyWaves)
     {
-        CurrentWave
-            .Where(waveIndex => waveIndex > StartWaveIndex)
-            .Take(enemyWaves.Waves.Count)
-            .Subscribe(waveIndex => SetupWave(enemyWaves, waveIndex))
-            .AddTo(_wavesSpawnDisposables);
-    }
-
-    private void SetupWave(EnemyWaves enemyWaves, int currentWaveIndex)
-    {
-        SpawnWave(enemyWaves.Waves[currentWaveIndex]);
-        StartCoroutine(ScheduleNextWave(enemyWaves, currentWaveIndex));
-    }
-
-    private void ScheduleFirstWave(EnemyWaves enemyWaves)
-    {
-        StartCoroutine(ScheduleNextWave(enemyWaves, StartWaveIndex));
-    }
-
-    private IEnumerator ScheduleNextWave(EnemyWaves enemyWaves, int currentWave)
-    {
-        int nextWave = currentWave + 1;
-
-        if (nextWave < enemyWaves.Waves.Count)
+        for (int i = 0; i < enemyWaves.Waves.Count; i++)
         {
-            float delaySeconds = enemyWaves.Waves[nextWave].WaveStartDelay;
-            yield return new WaitForSeconds(delaySeconds);
-            TriggerNextWaveIfExist(enemyWaves, currentWave);
+            EnemyWave wave = enemyWaves.Waves[i];
+            yield return new WaitForSeconds(wave.WaveStartDelay);
+
+            StartCoroutine(SpawnWave(wave));
         }
     }
 
-    private void TriggerNextWaveIfExist(EnemyWaves enemyWaves, int currentWave)
+    private IEnumerator SpawnWave(EnemyWave wave)
     {
-        if (currentWave < enemyWaves.Waves.Count - 1)
+        for (int i = 0; i < wave.EnemiesCount; i++)
         {
-            CurrentWave.Value = currentWave + 1;
-        } 
-    }
-
-    private void SpawnWave(EnemyWave wave)
-    {
-        Observable.Interval(TimeSpan.FromSeconds(wave.EnemiesSpawnDelay))
-            .Take(wave.EnemiesCount)
-            .Subscribe(_ => SpawnSingleEnemy(wave.EnemyPrefab))
-            .AddTo(_wavesSpawnDisposables);
+            SpawnSingleEnemy(wave.EnemyPrefab);
+            yield return new WaitForSeconds(wave.EnemiesSpawnDelay);
+        }
     }
 
     private void SpawnSingleEnemy(Enemy enemyPrefab)
@@ -117,7 +78,7 @@ public class SpawnArea : MonoBehaviour
                 AddRewardForEnemy(enemy);
                 ReduceEnemiesCount();
                 })
-            .AddTo(_wavesSpawnDisposables);
+            .AddTo(_spawnedEnemiesEventsContainer);
     }
 
     private void AddRewardForEnemy(Enemy enemy)

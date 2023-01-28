@@ -18,14 +18,14 @@ public class FirstStageWaveFactory : IEnemyWavesFactory
 
         if (levelNumber >= 2)
         {
-            waveStartDelay += 4;
-            builder.AddWave(_enemyBugRedPrefab, levelNumber - 1, waveStartDelay, 2.0f);
+            waveStartDelay += 6;
+            builder.AddWave(_enemyBugRedPrefab, levelNumber - 1, waveStartDelay, 4.0f);
         }
 
         if (levelNumber >= 6)
         {
-            waveStartDelay += 10;
-            builder.AddWave(_enemyBugGreenPrefab, levelNumber / 2, waveStartDelay);
+            waveStartDelay += 15;
+            builder.AddWave(_enemyBugGreenPrefab, levelNumber / 2, waveStartDelay, 2.0f);
         }
 
         return builder.Build();
