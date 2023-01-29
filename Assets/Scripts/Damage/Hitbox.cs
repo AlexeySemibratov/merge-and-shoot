@@ -20,17 +20,14 @@ public class Hitbox : MonoBehaviour
         {
             _hitTarget = true;
             OnHitTarget(hurtbox.Owner);
-            hurtbox.OnReceiveDamage(HitboxData.DamageData);
         }
     }
 
     private void OnHitTarget(IDamageTarget target)
     {
-        HitboxData.Owner.DealDamage(target, HitboxData.DamageData.GetTotalDamageAmount());
+        HitboxData.Owner.DealDamage(target, HitboxData.DamageData);
 
         if (_destroyGameObjectWhenHit)
-        {
             Destroy(gameObject);
-        }
     }
 }

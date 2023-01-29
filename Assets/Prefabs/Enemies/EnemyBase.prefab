@@ -162,7 +162,8 @@ GameObject:
   m_Component:
   - component: {fileID: 6393740853024053689}
   - component: {fileID: 5310816053845291996}
-  - component: {fileID: 2973248949063055493}
+  - component: {fileID: 3459269484812518352}
+  - component: {fileID: 7043104679277156222}
   m_Layer: 6
   m_Name: Hurtbox
   m_TagString: Untagged
@@ -199,7 +200,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &2973248949063055493
+--- !u!114 &3459269484812518352
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -208,10 +209,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 6037196370972185286}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4173900ebaa332f4980b9b4b8f368d8c, type: 3}
+  m_Script: {fileID: 11500000, guid: 86614a152c147804d97b1aaf5cbb43db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _owner: {fileID: 7142801241316240949}
+--- !u!114 &7043104679277156222
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6037196370972185286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54cde044f6bc7e24b9064065921f9f5d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _target: {fileID: 7142801241316240949}
   _floatingDamagePopup: {fileID: 7534412675254977543}
   _floatingDamageShowPosition: {fileID: 3103425262604661701}
 --- !u!1 &6504132640126404027

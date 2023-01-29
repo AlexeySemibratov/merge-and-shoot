@@ -17,7 +17,7 @@ public interface IDamageTarget
 
     bool IsDead { get; }
 
-    void DealDamage(IDamageTarget target, int damageAmount);
+    void DealDamage(IDamageTarget target, DamageData damage);
 
-    void TakeDamage(IDamageTarget from, int damageAmount);
+    void TakeDamage(IDamageTarget from, DamageData damage);
 }

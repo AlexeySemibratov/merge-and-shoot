@@ -11,10 +11,10 @@ public class FloatingDamageItemViewFactory
         _itemPrefab = itemPrefab;
     }
 
-    public FloatingDamageItemView Create(DamageData damage, Vector3 position)
+    public FloatingDamageItemView Create(RecievedDamageData damage, Vector3 position)
     {
         FloatingDamageItemView floatingText = Object.Instantiate(_itemPrefab, position, Quaternion.identity);
-        floatingText.SetText(damage.GetTotalDamageAmount().ToString());
+        floatingText.SetText(damage.Amount.ToString());
 
         if (damage.IsCritical)
         {

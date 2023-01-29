@@ -21,6 +21,17 @@ public struct DamageData
     }
 }
 
+public struct RecievedDamageData
+{
+    public int Amount;
+
+    public bool IsCritical;
+
+    public DamageType DamageType;
+
+    public bool IsDeadlyDamage;
+}
+
 public enum DamageType
 {
     Physical,
