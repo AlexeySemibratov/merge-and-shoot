@@ -15,14 +15,14 @@ public class FloatingDamagePopupPanel : MonoBehaviour
         _itemFactory = new FloatingDamageItemViewFactory(_floatingDamageItemPrefab);
     }
 
-    public void ShowFloatingDamage(Vector3 position, DamageData damageData)
+    public void ShowFloatingDamage(Vector3 position, RecievedDamageData damageData)
     {
         FloatingDamageItemView floatingText = CreateFloatingText(position, damageData);
         AnimatePopup(floatingText);
         Destroy(floatingText.gameObject, Duration);
     }
 
-    private FloatingDamageItemView CreateFloatingText(Vector3 posistion, DamageData damageData)
+    private FloatingDamageItemView CreateFloatingText(Vector3 posistion, RecievedDamageData damageData)
     {
         FloatingDamageItemView floatingText = _itemFactory.Create(damageData, posistion);
         floatingText.transform.SetParent(transform, false);

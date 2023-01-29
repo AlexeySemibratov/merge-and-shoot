@@ -1,7 +1,6 @@
 using System;
 using UniRx;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 [RequireComponent(typeof(DamageTarget), typeof(Rigidbody))]
 public class EnemyBehaviour : MonoBehaviour
@@ -117,7 +116,14 @@ public class EnemyBehaviour : MonoBehaviour
     private void PerformAttack()
     {
         _attackSubject.OnNext(Unit.Default);
-        _owner.DealDamage(_target, _damagePerAttack);
+
+        var damageData = new DamageData()
+        {
+            DamageType = DamageType.Physical,
+            BaseAmount = _damagePerAttack
+        };
+
+        _owner.DealDamage(_target, damageData);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -126,9 +132,7 @@ public class EnemyBehaviour : MonoBehaviour
             return;
 
         if (other.gameObject.name == _target.gameObject.name)
-        {
             _currentState.Value = State.Attacking;
-        }
     }
 
     private void OnTriggerExit(Collider other)

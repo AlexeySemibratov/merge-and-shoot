@@ -33,16 +33,16 @@ public class DamageTarget : MonoBehaviour, IDamageTarget
         CurrentHP = new IntReactiveProperty(MaxHP);
     }
 
-    public void DealDamage(IDamageTarget target, int damageAmount)
+    public void DealDamage(IDamageTarget target, DamageData damage)
     {
         if (IsDead) return;
 
-        target.TakeDamage(this, damageAmount);
+        target.TakeDamage(this, damage);
 
         var damageEvent = new DamageDealedEvent 
         {
             Target = target,
-            Damage = damageAmount
+            Damage = damage
         };
         
         _damageDealedSubject.OnNext(damageEvent);
@@ -53,31 +53,45 @@ public class DamageTarget : MonoBehaviour, IDamageTarget
     private void CheckTargetWasKilled(IDamageTarget target)
     {
         if (target.IsDead)
-        {
             _targetKilledSubject.OnNext(Unit.Default);
-        }
     }
 
-    public void TakeDamage(IDamageTarget from, int damageAmount)
+    public void TakeDamage(IDamageTarget from, DamageData damage)
     {
-        if (IsDead) return;
+        if (IsDead) 
+            return;
 
-        CurrentHP.Value = Math.Clamp(CurrentHP.Value - damageAmount, MinHP, MaxHP);
+        int hpBeforeDamage = CurrentHP.Value;
+        CurrentHP.Value = Math.Clamp(CurrentHP.Value - damage.GetTotalDamageAmount(), MinHP, MaxHP);
+
+        int recievedDamage = hpBeforeDamage - CurrentHP.Value;
+
+        EmitDamageTakenEvent(from, damage, recievedDamage);
+
+        if (IsDead)
+            OnDead();
+    }
+
+    private void EmitDamageTakenEvent(IDamageTarget from, DamageData sourceDamage, int recievedDamage)
+    {
         bool isDeadlyDamage = IsDead;
+
+        var recievedDamageData = new RecievedDamageData()
+        {
+            DamageType = sourceDamage.DamageType,
+            Amount = recievedDamage,
+            IsCritical = sourceDamage.IsCritical,
+            IsDeadlyDamage = isDeadlyDamage
+        };
 
         var damageEvent = new DamageTakenEvent
         {
             From = from,
-            Damage = damageAmount,
-            IsDeadlyDamage = isDeadlyDamage
+            SourceDamage = sourceDamage,
+            RecievedDamage = recievedDamageData
         };
 
         _damageTakenSubject.OnNext(damageEvent);
-
-        if (isDeadlyDamage)
-        {
-            OnDead();
-        }
     }
 
     private void OnDead()

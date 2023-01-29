@@ -1,7 +1,9 @@
 ﻿public struct DamageTakenEvent
 {
     public IDamageTarget From;
-    public int Damage;
-    public bool IsDeadlyDamage;
+
+    public DamageData SourceDamage;
+
+    public RecievedDamageData RecievedDamage;
 }
 

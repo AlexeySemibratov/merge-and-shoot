@@ -70,10 +70,8 @@ public class Enemy : MonoBehaviour
 
     private void OnTakeDamage(DamageTakenEvent damageEvent)
     {
-        if (damageEvent.IsDeadlyDamage == false)
-        {
+        if (damageEvent.RecievedDamage.IsDeadlyDamage == false)
             _enemyAnimator.PlayTakeDamage();
-        }
     }
 
     private void OnDead(IDamageTarget target)
