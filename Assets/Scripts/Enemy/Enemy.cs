@@ -1,7 +1,7 @@
 using UniRx;
 using UnityEngine;
 
-[RequireComponent(typeof(DamageTarget), typeof(Rigidbody), typeof(EnemyAnimator))]
+[RequireComponent(typeof(DamageTarget), typeof(EnemyAnimator))]
 public class Enemy : MonoBehaviour
 {
     public DamageTarget DamageTarget => _damageTarget;
@@ -14,7 +14,6 @@ public class Enemy : MonoBehaviour
     private int _moneyDropAmount = 0;
 
     private DamageTarget _damageTarget;
-    private Rigidbody _rigidBody;
     private EnemyAnimator _enemyAnimator;
     private EnemyBehaviour _enemyBehaviour;
 
@@ -22,14 +21,12 @@ public class Enemy : MonoBehaviour
     {
         InitializeComponents();
         ObserveDamageTargetEvents();
-        ObserveEnemyBehaviorEvents();
     }
 
     private void InitializeComponents()
     {
         _enemyAnimator = GetComponent<EnemyAnimator>();
         _damageTarget = GetComponent<DamageTarget>();
-        _rigidBody = GetComponent<Rigidbody>();
         _enemyBehaviour = GetComponent<EnemyBehaviour>();
     }
 
@@ -44,30 +41,6 @@ public class Enemy : MonoBehaviour
             .AddTo(this);   
     }
 
-    private void ObserveEnemyBehaviorEvents()
-    {
-        _enemyBehaviour.CurrentState
-            .Subscribe(state => AnimateBehaviour(state))
-            .AddTo(this);
-
-        _enemyBehaviour.Attacked
-            .Subscribe(_ => _enemyAnimator.PlayAttack())
-            .AddTo(this);
-    }
-
-    private void AnimateBehaviour(EnemyBehaviour.State state)
-    {
-        switch (state)
-        {
-            case EnemyBehaviour.State.Approaching:
-                _enemyAnimator.ChangeStateTo(EnemyAnimationState.Walking);
-                break;
-            default:
-                _enemyAnimator.ChangeStateTo(EnemyAnimationState.Idle);
-                break;
-        }
-    }
-
     private void OnTakeDamage(DamageTakenEvent damageEvent)
     {
         if (damageEvent.RecievedDamage.IsDeadlyDamage == false)
@@ -77,17 +50,7 @@ public class Enemy : MonoBehaviour
     private void OnDead(IDamageTarget target)
     {
         _enemyAnimator.ChangeStateTo(EnemyAnimationState.Dead);
-        _enemyBehaviour.enabled = false;
-        DisableBodyPhysics();
         DespawnEnemy();
-    }
-
-    private void DisableBodyPhysics()
-    {
-        _rigidBody.detectCollisions = false;
-        _rigidBody.velocity = Vector3.zero;
-
-        Destroy(_enemyBehaviour);
     }
 
     private void DespawnEnemy()
