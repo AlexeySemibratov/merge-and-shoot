@@ -227,10 +227,12 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   _bulletPrefab: {fileID: -5031988574525921556, guid: bd4c7501df087464da7dd7e533279114, type: 3}
-  _flashParticlesPrefab: {fileID: 0}
+  _flashParticlesPrefab: {fileID: 2616834945595334400, guid: 62b2c50e713bae746b33cdc635937500, type: 3}
   _gunMuzzleTransform: {fileID: 2834161177484585115}
-  _reloadingTime: 1
-  _damagePerBullet: 10
+  _animator: {fileID: 2834161178478961271}
+  _weaponStats:
+    ReloadingTime: 0.5
+    DamagePerBullet: 10
 --- !u!114 &2834161178478961271
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -15,7 +15,8 @@ public class TargetFinder : MonoBehaviour
         {
             if (collider.TryGetComponent(out Hurtbox target))
             {
-                return target.Owner;
+                if (target.Owner.IsDead == false)
+                    return target.Owner;
             }
         }
 

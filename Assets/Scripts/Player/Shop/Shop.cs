@@ -40,8 +40,8 @@ public class Shop : MonoBehaviour
         int previousCost = _availableWeaponUpgrade.Cost;
 
         _availableWeaponUpgrade = new UpgradeItem(
-            _availableWeaponUpgrade.Level + 1, 
-            previousCost * 2);
+            _availableWeaponUpgrade.Level + 1,
+            (int)(previousCost * 1.5));
 
         _availableWeaponUpgradeSubject.OnNext(_availableWeaponUpgrade);
     }

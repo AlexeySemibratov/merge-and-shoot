@@ -4,7 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(RifleWeapon))]
 [RequireComponent(typeof(PlayerAnimator))]
 [RequireComponent(typeof(TargetFinder))]
-public class Player : MonoBehaviour, IWorldMovementHandler
+public class Player : MonoBehaviour, IWorldMovementHandler, ITargetKeeper
 {
     public static Player Instance { get; private set; }
 
@@ -41,6 +41,16 @@ public class Player : MonoBehaviour, IWorldMovementHandler
         _animator.ChangeAnimationStateTo(PlayerAnimationState.Idle);
     }
 
+    public DamageTarget GetTarget()
+    {
+        return _currentTarget;
+    }
+
+    public void SetTarget(DamageTarget target)
+    {
+        _currentTarget = target;
+    }
+
     private void InitializeComponents()
     {
         _rifleWeapon = GetComponent<RifleWeapon>();
@@ -66,7 +76,10 @@ public class Player : MonoBehaviour, IWorldMovementHandler
         else if (_currentTarget.IsDead == false)
         {
             RotateToTarget(_currentTarget);
-            ShootToTarget(_currentTarget);
+        }
+        else
+        {
+            _currentTarget = null;
         }
     }
 
@@ -80,20 +93,12 @@ public class Player : MonoBehaviour, IWorldMovementHandler
         Vector3 direction = _body.position.DirectedTo(target.transform.position);
 
         Quaternion rotateTo = Quaternion.LookRotation(direction);
-        _body.rotation = Quaternion.RotateTowards(_body.rotation, rotateTo, _rotationSpeed * Time.fixedDeltaTime);
-    }
 
-    private void ShootToTarget(DamageTarget target)
-    {
-        _rifleWeapon.ShootAt(target);
+        _body.rotation = Quaternion.RotateTowards(_body.rotation, rotateTo, _rotationSpeed * Time.fixedDeltaTime);
     }
 
     private void ObserveComponentEvents()
     {
-        _rifleWeapon.SingleShootPerformed
-            .Subscribe(_ => PlayShootAnimation())
-            .AddTo(this);
-
         _damageTarget.TargetDead
             .Subscribe(_ => OnDead())
             .AddTo(this);
@@ -108,11 +113,6 @@ public class Player : MonoBehaviour, IWorldMovementHandler
 
     private void DisableComponents()
     {
-        _rifleWeapon.enabled = false;
-    }
-
-    private void PlayShootAnimation()
-    {
-        _animator.PlayShoot();
+        _rifleWeapon.Disable();
     }
 }

@@ -1,17 +1,17 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UniRx;
 using UnityEngine;
 
 [RequireComponent(typeof(DamageTarget))]
-public class RifleWeapon : MonoBehaviour, IUpgradeable
+public class RifleWeapon : MonoBehaviour, IUpgradeable, IWeaponStateSwitcher, IProvider<WeaponStats>
 {
     public IObservable<RifleWeaponEvent> SingleShootPerformed => _performSingleShootSubject;
     private Subject<RifleWeaponEvent> _performSingleShootSubject = new Subject<RifleWeaponEvent>();
 
     public IReadOnlyReactiveProperty<int> Level => _currentLevel;
     private ReactiveProperty<int> _currentLevel = new ReactiveProperty<int>(1);
-
-    private const float ReloadingTimeInterval = 0.1f;
 
     [SerializeField]
     private LayerMask _enemiesLayerMask;
@@ -26,24 +26,47 @@ public class RifleWeapon : MonoBehaviour, IUpgradeable
     private Transform _gunMuzzleTransform;
 
     [SerializeField]
+    private PlayerAnimator _animator;
+
+    [SerializeField]
     private WeaponStats _weaponStats;
 
     private IDamageSkillRegistry _damageSkills;
+    private IFactory<Bullet> _bulletFactory;
+    private IFactory<ParticleSystem> _flashParticlesFactory;
 
     private IDamageTarget _owner;
+    private ITargetKeeper _targetKeeper;
 
-    private ReactiveProperty<State> _currentState = new ReactiveProperty<State>(State.ReadyToFire);
+    private List<IWeaponState> _states;
 
-    private CompositeDisposable _reloadingDisposable = new CompositeDisposable();
+    private IWeaponState _currentState;
 
     private void Awake()
     {
-        _owner = GetComponent<IDamageTarget>();
+        InitializeComponents();
+        InitializeStates();
+    }
 
-        var skillContainer = new SkillContainer(); // TODO Temporal. Rifle class is not a skill container
-        skillContainer.AddSkill(new CriticalDamageSkill(0.5f, 0.3f));
+    public void SwitchStateTo<T>() where T : IWeaponState
+    {
+        var type = typeof(T);
 
-        _damageSkills = skillContainer;
+        var newState = _states.FirstOrDefault(e => e.GetType() == type);
+
+        if (newState == null)
+            throw new ArgumentException($"State {type} not found");
+
+        if (_currentState != null)
+            _currentState.OnStateExit();
+
+        _currentState = newState;
+        _currentState.OnStateEnter();
+    }
+
+    public WeaponStats Get()
+    {
+        return _weaponStats;
     }
 
     public void ApplyUpgrade(UpgradeItem upgrade)
@@ -52,91 +75,34 @@ public class RifleWeapon : MonoBehaviour, IUpgradeable
         _weaponStats.UpdateStats(upgrade.Level);
     }
 
-    public void ShootAt(DamageTarget target)
+    public void Disable()
     {
-        if (_currentState.Value != State.ReadyToFire)
-            return;
-
-        Vector3 direction = _gunMuzzleTransform.transform.position.DirectedTo(target.transform.position);
-
-        if (Physics.Raycast(_gunMuzzleTransform.transform.position, direction, out RaycastHit hit, Mathf.Infinity, _enemiesLayerMask))
-        {
-            Shoot();
-        }
+        _currentState = null;
     }
 
-    private void ChangeStateTo(State newState)
+    private void InitializeComponents()
     {
-        _currentState.Value = newState;
+        _owner = GetComponent<IDamageTarget>();
+        _targetKeeper = GetComponent<ITargetKeeper>();
+
+        var skillContainer = new SkillContainer(); // TODO Temporal. Rifle class is not a skill container
+        skillContainer.AddSkill(new CriticalDamageSkill(0.5f, 0.3f));
+
+        _damageSkills = skillContainer;
+
+        _bulletFactory = new RifleBulletFactory(_bulletPrefab, _gunMuzzleTransform, this, _damageSkills, _owner);
+        _flashParticlesFactory = new FlashParticlesFactory(_flashParticlesPrefab, _gunMuzzleTransform);
     }
 
-    private void Shoot()
+    private void InitializeStates()
     {
-        _performSingleShootSubject.OnNext(RifleWeaponEvent.SingleShoot);
-        StartReloading();
-        SpawnFlashParticles();
-        SpawnBullet();
-    }
-
-    private void StartReloading()
-    {
-        ChangeStateTo(State.Reloading);
-
-        Observable.Interval(TimeSpan.FromSeconds(ReloadingTimeInterval))
-            .Subscribe(time => HandleReloadingTime(time))
-            .AddTo(_reloadingDisposable);
-    }
-
-    private void HandleReloadingTime(long time)
-    { 
-        float totalTime = time * ReloadingTimeInterval;
-        if (totalTime >= _weaponStats.ReloadingTime)
-        {
-            _reloadingDisposable.Clear();
-            _currentState.Value = State.ReadyToFire;
-        }
-    }
-
-    private void SpawnBullet()
-    {
-        Bullet bullet = Bullet.Instantiate(_bulletPrefab, _gunMuzzleTransform.position, _gunMuzzleTransform.rotation);
-        var hitboxData = new HitboxData
-        {
-            Owner = _owner,
-            DamageData = CalculateDamageData(),
+        _states = new List<IWeaponState>() 
+        { 
+            new Shoot(this, this, _bulletFactory, _flashParticlesFactory, _animator),
+            new Reloading(this, this),
+            new Idle(this, this, _targetKeeper)
         };
 
-        bullet.SetHitboxData(hitboxData);
-    }
-
-    private DamageData CalculateDamageData()
-    {
-        var basicDamage = new DamageData
-        {
-            BaseAmount = _weaponStats.DamagePerBullet,
-            CriticalMultiplyer = 1.0f,
-            IsCritical = false,
-            AdditionalAmount = 0,
-            DamageType = DamageType.Physical
-        };
-
-        foreach (IDamageSkill skill in _damageSkills.GetDamageSkills())
-        {
-            basicDamage = skill.ApplyForDamage(basicDamage);
-        }
-
-        return basicDamage;
-    }
-
-    private void SpawnFlashParticles()
-    {
-        var particles = Instantiate(_flashParticlesPrefab, _gunMuzzleTransform);
-        Destroy(particles.gameObject, particles.main.duration);
-    }
-
-    private enum State
-    {
-        ReadyToFire,
-        Reloading
+        SwitchStateTo<Idle>();
     }
 }
