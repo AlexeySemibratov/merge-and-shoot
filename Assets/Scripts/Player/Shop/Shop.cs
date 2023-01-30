@@ -9,7 +9,7 @@ public class Shop : MonoBehaviour
     public IObservable<UpgradeItem> AvailableWeaponUpgrade => _availableWeaponUpgradeSubject;
     private ISubject<UpgradeItem> _availableWeaponUpgradeSubject = new ReplaySubject<UpgradeItem>();
 
-    private IntReactiveProperty _currentMoney = new IntReactiveProperty(1000);
+    private IntReactiveProperty _currentMoney = new IntReactiveProperty(0);
 
     private UpgradeItem _availableWeaponUpgrade = new UpgradeItem(1, 50);
 
@@ -38,10 +38,11 @@ public class Shop : MonoBehaviour
     private void UpdateWeaponUpgrade()
     {
         int previousCost = _availableWeaponUpgrade.Cost;
+        int newLevel = _availableWeaponUpgrade.Level + 1;
 
         _availableWeaponUpgrade = new UpgradeItem(
             _availableWeaponUpgrade.Level + 1,
-            (int)(previousCost * 1.5));
+            (int)(previousCost + 100 * newLevel));
 
         _availableWeaponUpgradeSubject.OnNext(_availableWeaponUpgrade);
     }

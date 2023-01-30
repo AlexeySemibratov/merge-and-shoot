@@ -7,14 +7,8 @@ using UnityEngine;
 [RequireComponent(typeof(DamageTarget))]
 public class RifleWeapon : MonoBehaviour, IUpgradeable, IWeaponStateSwitcher, IProvider<WeaponStats>
 {
-    public IObservable<RifleWeaponEvent> SingleShootPerformed => _performSingleShootSubject;
-    private Subject<RifleWeaponEvent> _performSingleShootSubject = new Subject<RifleWeaponEvent>();
-
     public IReadOnlyReactiveProperty<int> Level => _currentLevel;
     private ReactiveProperty<int> _currentLevel = new ReactiveProperty<int>(1);
-
-    [SerializeField]
-    private LayerMask _enemiesLayerMask;
 
     [SerializeField]
     private Bullet _bulletPrefab;
