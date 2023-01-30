@@ -1762,11 +1762,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2834161178478961268, guid: 73bf4906289630148924977a9c82d154, type: 3}
       propertyPath: _weaponStats.DamagePerBullet
-      value: 30
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 2834161178478961272, guid: 73bf4906289630148924977a9c82d154, type: 3}
       propertyPath: _radius
-      value: 12
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 2834161178478961272, guid: 73bf4906289630148924977a9c82d154, type: 3}
       propertyPath: _layerMask.m_Bits
